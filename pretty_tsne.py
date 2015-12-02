@@ -38,22 +38,24 @@ digits = load_digits()
 digits.data.shape
 
 nrows, ncols = 2, 5
-plt.figure(figsize=(6,3))
+plt.figure(figsize=(6, 3))
 plt.gray()
 for i in range(ncols * nrows):
     ax = plt.subplot(nrows, ncols, i + 1)
-    ax.matshow(digits.images[i,...])
-    plt.xticks([]); plt.yticks([])
+    ax.matshow(digits.images[i, ...])
+    plt.xticks([])
+    plt.yticks([])
     plt.title(digits.target[i])
 plt.savefig('images/digits-generated.png', dpi=150)
 
 # We first reorder the data points according to the handwritten numbers.
-X = np.vstack([digits.data[digits.target==i]
+X = np.vstack([digits.data[digits.target == i]
                for i in range(10)])
-y = np.hstack([digits.target[digits.target==i]
+y = np.hstack([digits.target[digits.target == i]
                for i in range(10)])
 
 digits_proj = TSNE(random_state=RS).fit_transform(X)
+
 
 def scatter(x, colors):
     # We choose a color palette with seaborn.
@@ -62,7 +64,7 @@ def scatter(x, colors):
     # We create a scatter plot.
     f = plt.figure(figsize=(8, 8))
     ax = plt.subplot(aspect='equal')
-    sc = ax.scatter(x[:,0], x[:,1], lw=0, s=40,
+    sc = ax.scatter(x[:, 0], x[:, 1], lw=0, s=40,
                     c=palette[colors.astype(np.int)])
     plt.xlim(-25, 25)
     plt.ylim(-25, 25)
@@ -87,6 +89,8 @@ plt.savefig('images/digits_tsne-generated.png', dpi=120)
 
 # This list will contain the positions of the map points at every iteration.
 positions = []
+
+
 def _gradient_descent(objective, p0, it, n_iter, n_iter_without_progress=30,
                       momentum=0.5, learning_rate=1000.0, min_gain=0.01,
                       min_grad_norm=1e-7, min_error_diff=1e-7, verbose=0,
@@ -137,8 +141,9 @@ X_iter = np.dstack(position.reshape(-1, 2)
 
 f, ax, sc, txts = scatter(X_iter[..., -1], y)
 
+
 def make_frame_mpl(t):
-    i = int(t*40)
+    i = int(t * 40)
     x = X_iter[..., i]
     sc.set_offsets(x)
     for j, txt in zip(range(10), txts):
@@ -148,5 +153,5 @@ def make_frame_mpl(t):
     return mplfig_to_npimage(f)
 
 animation = mpy.VideoClip(make_frame_mpl,
-                          duration=X_iter.shape[2]/40.)
+                          duration=X_iter.shape[2] / 40.)
 animation.write_gif("images/tsne.gif", fps=20)
