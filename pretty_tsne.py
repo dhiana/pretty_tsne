@@ -34,28 +34,6 @@ sns.set_context("notebook", font_scale=1.5,
 from moviepy.video.io.bindings import mplfig_to_npimage
 import moviepy.editor as mpy
 
-digits = load_digits()
-digits.data.shape
-
-nrows, ncols = 2, 5
-plt.figure(figsize=(6, 3))
-plt.gray()
-for i in range(ncols * nrows):
-    ax = plt.subplot(nrows, ncols, i + 1)
-    ax.matshow(digits.images[i, ...])
-    plt.xticks([])
-    plt.yticks([])
-    plt.title(digits.target[i])
-plt.savefig('images/digits-generated.png', dpi=150)
-
-# We first reorder the data points according to the handwritten numbers.
-X = np.vstack([digits.data[digits.target == i]
-               for i in range(10)])
-y = np.hstack([digits.target[digits.target == i]
-               for i in range(10)])
-
-digits_proj = TSNE(random_state=RS).fit_transform(X)
-
 
 def scatter(x, colors):
     # We choose a color palette with seaborn.
@@ -83,12 +61,6 @@ def scatter(x, colors):
         txts.append(txt)
 
     return f, ax, sc, txts
-
-scatter(digits_proj, y)
-plt.savefig('images/digits_tsne-generated.png', dpi=120)
-
-# This list will contain the positions of the map points at every iteration.
-positions = []
 
 
 def _gradient_descent(objective, p0, it, n_iter, n_iter_without_progress=30,
@@ -132,14 +104,6 @@ def _gradient_descent(objective, p0, it, n_iter, n_iter_without_progress=30,
         p += update
 
     return p, error, i
-sklearn.manifold.t_sne._gradient_descent = _gradient_descent
-
-X_proj = TSNE(random_state=RS).fit_transform(X)
-
-X_iter = np.dstack(position.reshape(-1, 2)
-                   for position in positions)
-
-f, ax, sc, txts = scatter(X_iter[..., -1], y)
 
 
 def make_frame_mpl(t):
@@ -152,6 +116,43 @@ def make_frame_mpl(t):
         txt.set_y(ytext)
     return mplfig_to_npimage(f)
 
-animation = mpy.VideoClip(make_frame_mpl,
-                          duration=X_iter.shape[2] / 40.)
-animation.write_gif("images/tsne.gif", fps=20)
+
+if __name__ == '__main__':
+    digits = load_digits()
+    digits.data.shape
+
+    nrows, ncols = 2, 5
+    plt.figure(figsize=(6, 3))
+    plt.gray()
+    for i in range(ncols * nrows):
+        ax = plt.subplot(nrows, ncols, i + 1)
+        ax.matshow(digits.images[i, ...])
+        plt.xticks([])
+        plt.yticks([])
+        plt.title(digits.target[i])
+    plt.savefig('images/digits-generated.png', dpi=150)
+
+    # We first reorder the data points according to the handwritten numbers.
+    X = np.vstack([digits.data[digits.target == i]
+                   for i in range(10)])
+    y = np.hstack([digits.target[digits.target == i]
+                   for i in range(10)])
+
+    digits_proj = TSNE(random_state=RS).fit_transform(X)
+
+    scatter(digits_proj, y)
+    plt.savefig('images/digits_tsne-generated.png', dpi=120)
+
+    # This list will contain the positions of the map points at every iteration.
+    positions = []
+    sklearn.manifold.t_sne._gradient_descent = _gradient_descent
+
+    X_proj = TSNE(random_state=RS).fit_transform(X)
+
+    X_iter = np.dstack(position.reshape(-1, 2)
+                       for position in positions)
+
+    f, ax, sc, txts = scatter(X_iter[..., -1], y)
+    animation = mpy.VideoClip(make_frame_mpl,
+                              duration=X_iter.shape[2] / 40.)
+    animation.write_gif("images/tsne.gif", fps=20)
