@@ -123,16 +123,6 @@ if __name__ == '__main__':
     digits = load_digits()
     digits.data.shape
 
-    nrows, ncols = 2, 5
-    plt.figure(figsize=(6, 3))
-    plt.gray()
-    for i in range(ncols * nrows):
-        ax = plt.subplot(nrows, ncols, i + 1)
-        ax.matshow(digits.images[i, ...])
-        plt.xticks([])
-        plt.yticks([])
-        plt.title(digits.target[i])
-    plt.savefig('images/digits-generated.png', dpi=150)
 
     # We first reorder the data points according to the handwritten numbers.
     X = np.vstack([digits.data[digits.target == i]
