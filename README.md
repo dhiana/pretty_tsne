@@ -11,4 +11,13 @@ Run command:
 
     $ python pretty_tsne.py
 
-Images will be generated under images folder.
+An image of t-SNE projection will be generated under images folder,
+together with a gif animation of the projections during the model
+evolution.
+
+Also, a csv with projected data and labels (if available) will be
+generated under data folder.
+
+Finaly, to view an interactive (labels on hover) t-SNE plot:
+
+    $ python -m SimpleHTTPServer 8000
