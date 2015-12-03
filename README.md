@@ -9,7 +9,7 @@ Install packages:
 
 Run command:
 
-    $ python pretty_tsne.py
+    $ python pretty_tsne.py --csv_file <csv_file> --label <label_column_name>
 
 An image of t-SNE projection will be generated under images folder,
 together with a gif animation of the projections during the model

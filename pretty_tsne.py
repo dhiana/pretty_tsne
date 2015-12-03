@@ -108,11 +108,10 @@ def make_frame_mpl(t):
 
 def _parse_file_argument():
     parser = argparse.ArgumentParser("t-SNE commandline tool")
-    parser.add_argument('csv_file',
+    parser.add_argument('--csv_file',
                         help='input csv filename')
-    parser.add_argument('label',
-                        help='column name with label',
-                        nargs='?')
+    parser.add_argument('--label',
+                        help='column name with label')
     args = parser.parse_args()
     return args
 
