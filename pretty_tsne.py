@@ -133,9 +133,8 @@ if __name__ == '__main__':
 
     # treating label column
     label_column = args.label
-    if label_column:
-        labels = input_data[label_column].values
-        input_data.drop(label_column, axis=1, inplace=True)
+    labels = input_data[label_column].values
+    input_data.drop(label_column, axis=1, inplace=True)
     features = input_data.columns.values
 
     # Important part ;)
