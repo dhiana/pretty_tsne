@@ -3,6 +3,7 @@ import numpy as np
 from numpy import linalg
 from numpy.linalg import norm
 from scipy.spatial.distance import squareform, pdist
+import pandas as pd
 
 # We import sklearn.
 import sklearn
@@ -142,6 +143,9 @@ if __name__ == '__main__':
 
     scatter(digits_proj, y)
     plt.savefig('images/digits_tsne-generated.png', dpi=120)
+    # Save projecton as csv
+    df = pd.DataFrame(index=labels, data=tsne_proj, columns=['x', 'y'])
+    df.to_csv('data/tsne.csv', index_label='label')
 
     # This list will contain the positions of the map points at every iteration.
     positions = []
