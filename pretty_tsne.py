@@ -16,8 +16,6 @@ from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.manifold.t_sne import (_joint_probabilities,
                                     _kl_divergence)
 from sklearn.utils.extmath import _ravel
-# Random state.
-RS = 20150101
 
 # We'll use matplotlib for graphics.
 import matplotlib.pyplot as plt
@@ -35,6 +33,9 @@ sns.set_context("notebook", font_scale=1.5,
 from moviepy.video.io.bindings import mplfig_to_npimage
 import moviepy.editor as mpy
 
+# Random state.
+RS = 20150101
+DEBUG = False
 
 def scatter(x, colors):
     # We choose a color palette with seaborn.
