@@ -1,3 +1,5 @@
+import argparse
+
 # That's an impressive list of imports.
 import numpy as np
 from numpy import linalg
@@ -37,32 +39,21 @@ import moviepy.editor as mpy
 RS = 20150101
 DEBUG = False
 
-def scatter(x, colors):
+
+def scatter(x):
     # We choose a color palette with seaborn.
     palette = np.array(sns.color_palette("hls", 10))
 
     # We create a scatter plot.
     f = plt.figure(figsize=(8, 8))
     ax = plt.subplot(aspect='equal')
-    sc = ax.scatter(x[:, 0], x[:, 1], lw=0, s=40,
-                    c=palette[colors.astype(np.int)])
+    sc = ax.scatter(x[:, 0], x[:, 1], lw=0, s=40)
     plt.xlim(-25, 25)
     plt.ylim(-25, 25)
     ax.axis('off')
     ax.axis('tight')
 
-    # We add the labels for each digit.
-    txts = []
-    for i in range(10):
-        # Position of each label.
-        xtext, ytext = np.median(x[colors == i, :], axis=0)
-        txt = ax.text(xtext, ytext, str(i), fontsize=24)
-        txt.set_path_effects([
-            PathEffects.Stroke(linewidth=5, foreground="w"),
-            PathEffects.Normal()])
-        txts.append(txt)
-
-    return f, ax, sc, txts
+    return f, ax, sc
 
 
 def _gradient_descent(objective, p0, it, n_iter, n_iter_without_progress=30,
@@ -112,42 +103,59 @@ def make_frame_mpl(t):
     i = int(t * 40)
     x = X_iter[..., i]
     sc.set_offsets(x)
-    for j, txt in zip(range(10), txts):
-        xtext, ytext = np.median(x[y == j, :], axis=0)
-        txt.set_x(xtext)
-        txt.set_y(ytext)
     return mplfig_to_npimage(f)
 
 
+def _parse_file_argument():
+    parser = argparse.ArgumentParser("t-SNE commandline tool")
+    parser.add_argument('csv_file',
+                        help='input csv filename')
+    parser.add_argument('label',
+                        help='column name with label',
+                        nargs='?')
+    args = parser.parse_args()
+    return args
+
+
+def _read_input_string(args):
+    graph_file = args.graph_file
+    graph_string = graph_file.readline().strip('\n')
+    graph_file.close()
+    return graph_string
+
+
 if __name__ == '__main__':
-    digits = load_digits()
-    digits.data.shape
+    # parsing input data
+    args = _parse_file_argument()
+    input_data = pd.read_csv(args.csv_file)
 
+    # treating missing data
+    input_data.fillna(0, inplace=True)
 
-    # We first reorder the data points according to the handwritten numbers.
-    X = np.vstack([digits.data[digits.target == i]
-                   for i in range(10)])
-    y = np.hstack([digits.target[digits.target == i]
-                   for i in range(10)])
+    # treating label column
+    label_column = args.label
+    if label_column:
+        labels = input_data[label_column].values
+        input_data.drop(label_column, axis=1, inplace=True)
+    features = input_data.columns.values
 
-    digits_proj = TSNE(random_state=RS).fit_transform(X)
+    # Important part ;)
+    tsne_proj = TSNE(random_state=RS).fit_transform(input_data)
 
-    scatter(digits_proj, y)
-    plt.savefig('images/digits_tsne-generated.png', dpi=120)
     # Save projecton as csv
     df = pd.DataFrame(index=labels, data=tsne_proj, columns=['x', 'y'])
     df.to_csv('data/tsne.csv', index_label='label')
 
-    # This list will contain the positions of the map points at every iteration.
-    positions = []
+    # 2d visualization
+    scatter(tsne_proj)
+    plt.savefig('images/tsne.png', dpi=120)
+
+    # Monkey patch in order to track model evolution
     sklearn.manifold.t_sne._gradient_descent = _gradient_descent
-
-    X_proj = TSNE(random_state=RS).fit_transform(X)
-
-    X_iter = np.dstack(position.reshape(-1, 2)
-                       for position in positions)
-
-    f, ax, sc, txts = scatter(X_iter[..., -1], y)
-    animation = mpy.VideoClip(make_frame_mpl,
-                              duration=X_iter.shape[2] / 40.)
+    # Positions of the map points at every iteration.
+    positions = []
+    X_proj = TSNE(random_state=RS).fit_transform(tsne_proj)
+    X_iter = np.dstack(position.reshape(-1, 2) for position in positions)
+    f, ax, sc = scatter(X_iter[..., -1])
+    animation = mpy.VideoClip(make_frame_mpl, duration=X_iter.shape[2] / 40.)
     animation.write_gif("images/tsne.gif", fps=20)
