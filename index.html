@@ -29,8 +29,21 @@ body {
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+  <input id="name" />
+  <button onclick="go();">Procurar</button>
+
 
 <script>
+
+function go(){
+  var name = document.getElementById('name').value;
+  svg.selectAll(".dot")
+    .style("fill", function(d) { return color(cValue(d));});
+
+  svg.select("#"+name)
+    .style("fill", "red");
+}
+
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -85,6 +98,9 @@ d3.csv("data/tsne.csv", function(error, data) {
       .attr("cx", xMap)
       .attr("cy", yMap)
       .style("fill", function(d) { return color(cValue(d));})
+       .attr("id", function(d){
+         return d["label"];
+       })
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
