@@ -26,6 +26,8 @@ body {
 
   <script src="http://d3js.org/d3.v3.min.js"></script>
 
+  <div id="viz"></div>
+
   Login:
   <input id="name" />
   <button onclick="go();">Make it red!</button>
@@ -62,7 +64,7 @@ var cValue = function(d) { return d.Manufacturer;},
     color = d3.scale.category10();
 
 // add the graph canvas to the body of the webpage
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#viz").append("svg")
     .attr("width", width + margin.left + margin.right + 100) // +100 for class labels
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
