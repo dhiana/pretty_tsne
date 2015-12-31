@@ -30,7 +30,7 @@ body {
 
   Login:
   <input id="name" />
-  <button onclick="go();">Make it red!</button>
+  <button onclick="go();">Make it big!!</button>
 
 <script>
 
@@ -40,7 +40,7 @@ function go(){
     .style("fill", function(d) { return color(cValue(d));});
 
   svg.select("#"+name)
-    .style("fill", "red");
+    .attr("r", 20);
 }
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
