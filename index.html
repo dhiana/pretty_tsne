@@ -1,124 +1,27 @@
 <!DOCTYPE html>
-<html>
-<meta charset="utf-8">
-
 <!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<html>
 
-<style>
-body {
-  font: 11px sans-serif;
-}
+<head>
 
-.dot {
-  stroke: #000;
-}
-
-.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
-  color: #FF0000;
-  font-weight: bold;
-}
-</style>
-<body>
-
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="static/main.css">
   <script src="http://d3js.org/d3.v3.min.js"></script>
+
+</head>
+
+<body>
 
   <div id="viz"></div>
 
   <form action="javascript:void(0);">
-  Login:
-  <input id="name" />
-  <button onclick="go();">Make it big!!</button>
+    Login:
+    <input id="name" />
+    <button onclick="go();">Make it big!!</button>
   </form>
 
-<script>
+  <script src="static/main.js"></script>
 
-function go(){
-  var name = document.getElementById('name').value;
-  svg.selectAll(".dot")
-    .style("fill", function(d) { return color(cValue(d));});
-
-  svg.select("#"+name)
-    .attr("r", 20);
-}
-
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 900 - margin.left - margin.right,
-    height = 900 - margin.top - margin.bottom;
-
-// setup x
-var xValue = function(d) { return d.x;}, // data -> value
-    xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) { return xScale(xValue(d));}, // data -> display
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-// setup y
-var yValue = function(d) { return d["y"];}, // data -> value
-    yScale = d3.scale.linear().range([height, 0]), // value -> display
-    yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-// setup fill color
-var cValue = function(d) { return d.Manufacturer;},
-    color = d3.scale.category10();
-
-// add the graph canvas to the body of the webpage
-var svg = d3.select("#viz").append("svg")
-    .attr("width", width + margin.left + margin.right + 100) // +100 for class labels
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// add the tooltip area to the webpage
-var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-// load data
-d3.csv("data/tsne.csv", function(error, data) {
-
-  // change string (from CSV) into number format
-  data.forEach(function(d) {
-    d.x = +d.x;
-    d["y"] = +d["y"];
-  });
-
-  // don't want dots overlapping axis, so add in buffer to data domain
-  xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
-  yScale.domain([d3.min(data, yValue)-1, d3.max(data, yValue)+1]);
-
-  // draw dots
-  svg.selectAll(".dot")
-      .data(data)
-      .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 10)
-      .attr("cx", xMap)
-      .attr("cy", yMap)
-      .style("fill", function(d) { return color(cValue(d));})
-      .attr("id", function(d){
-         return d["label"];
-       })
-      .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(200)
-               .style("opacity", .9);
-
-          tooltip.html(d["label"] + " (" + xValue(d).toFixed(1) + ", " + yValue(d).toFixed(1) + ")")
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
-      })
-      .on("mouseout", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
-      });
-
-});
-
-</script>
 </body>
+
 </html>
