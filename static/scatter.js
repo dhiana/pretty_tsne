@@ -73,10 +73,10 @@ var drawDots = function (svg, data, x, y, tooltip, className) {
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
-               .style("opacity", .9)
-               .html(d.label)
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
+               .style("opacity", .9);
+          tooltip.html(d.label)
+                 .style("left", (d3.event.pageX + 5) + "px")
+                 .style("top", (d3.event.pageY - 28) + "px");
       })
       .on("mouseout", function(d) {
           tooltip.transition()
