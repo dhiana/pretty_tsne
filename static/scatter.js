@@ -68,14 +68,13 @@ var drawDots = function (svg, data, x, y, tooltip, className) {
       .attr("cy", y.Map)
       .style("fill", function(d) { return color(cValue(d, className));})
       .attr("id", function(d){
-         return d["label"];
+         return d.label;
        })
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
-               .style("opacity", .9);
-
-          tooltip.html(d["label"] + " (" + x.Value(d).toFixed(1) + ", " + y.Value(d).toFixed(1) + ")")
+               .style("opacity", .9)
+               .html(d.label)
                .style("left", (d3.event.pageX + 5) + "px")
                .style("top", (d3.event.pageY - 28) + "px");
       })
