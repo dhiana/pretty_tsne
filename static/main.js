@@ -10,7 +10,7 @@ window.onload = function () {
 var main = (function () {
 
   var filename = "data/tsne.csv";
-  var CLASS_NAME = "Grade";
+  var CLASS_NAME = "Role";
 
   d3.csv(filename, function(error, data) {
 
