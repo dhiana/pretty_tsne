@@ -1,7 +1,10 @@
-var go = function () {
-  var name = document.getElementById('name').value;
-  d3.select("#"+name)
-    .attr("r", 20);
+window.onload = function () {
+  searchButton = document.getElementById("searchButton")
+    .onclick = function searchByLogin () {
+      login =  this.form.login.value;
+      d3.select("#"+login)
+        .attr("r", 20);
+    };
 };
 
 var main = (function () {
