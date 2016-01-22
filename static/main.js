@@ -20,12 +20,12 @@ var main = (function () {
     var x = setupX(width);
     var y = setupY(height);
     var svg = addGraphToBody(margin, width, height);
-    var legend = createLegend(svg);
     var tooltip = createTooltip();
 
     string2number(data);
     drawDots(svg, data, x, y, tooltip, CLASS_NAME);
 
+    var legend = createLegend(svg);
     drawLegendColoredRectangles(legend, width);
     drawLegendText(legend, width);
 
